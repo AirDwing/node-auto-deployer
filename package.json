@@ -1,14 +1,14 @@
 {
   "name": "auto-deployer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "CI Auto Deployer",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "bin": {
     "deployer": "./bin/deployer.js"
   },
   "scripts": {
     "start": "npm run compile",
-    "compile": "./node_modules/.bin/babel src --out-dir dist",
+    "compile": "rm -rf ./dist && ./node_modules/.bin/babel src --out-dir dist",
     "prepublish": "npm run compile"
   },
   "repository": {

@@ -1,7 +1,7 @@
 import http from 'http';
 import createHandler from './handler';
 
-module.exports = (projects, { path = '/', host = '0.0.0.0', port = 8888 }) => {
+module.exports = (projects = [], { path = '/', host = '0.0.0.0', port = 8888 }) => {
   if (typeof projects !== 'object' || !projects[0] || typeof projects[0] !== 'object') {
     throw new Error('Invalid Project Config');
   }
