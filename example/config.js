@@ -4,8 +4,8 @@ exports.logPath = '/home/wulian/lab/logs/';
 exports.cachePath = `${__dirname.replace('/example', '')}/.cache/`;
 
 const projects = [{
-  repo: 'git@willin.net:lab/auto-deploy.git',
-  path: '/home/wulian/lab/auto-deploy/',
+  repo: 'git@xxx:xxx.git',
+  path: '/home/xxx/xxx/',
   app: 'test'
 }];
 
