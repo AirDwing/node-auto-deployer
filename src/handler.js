@@ -52,7 +52,7 @@ module.exports = (path) => {
         url: req.url
       };
 
-      handler.emit(event, emitData);
+      handler.emit(eventKind, emitData);
       handler.emit('*', emitData);
     }));
   };
