@@ -12,9 +12,8 @@ server.on('error', (err) => {
 server.on('build', async(event) => {
   const payload = event.payload;
   const key = md5(payload.repository.git_ssh_url);
-  console.log(payload.repository.git_ssh_url, key);
   // 构建失败
-  if (event.event !== 'build' || payload.build_status !== 'success' || payload.build_stage !== 'deploy') {
+  if (event.event !== 'build' || payload.build_status !== 'success' || (payload.build_stage !== 'deploy' && payload.ref !== 'master')) {
     return;
   }
   // 确定为哪个项目触发的部署
@@ -27,6 +26,7 @@ server.on('build', async(event) => {
   if (!exist(packPath)) {
     return;
   }
+  console.log('%s Deploy start at %s', project.app, new Date());
   // 拉取最新代码
   console.log(
     await spawn('git', ['pull'], { cwd: project.path, env: process.env })
