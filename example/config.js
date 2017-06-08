@@ -1,17 +1,18 @@
-import { md5 } from './helper';
+const { md5 } = require('@dwing/common');
 
-exports.logPath = '/home/wulian/lab/logs/';
+exports.logPath = '/home/ubuntu/apps/logs/';
 exports.cachePath = `${__dirname.replace('/example', '')}/.cache/`;
 
 const projects = [{
-  repo: 'git@xxx:xxx.git',
-  path: '/home/xxx/xxx/',
+  repo: 'git@git.coding.net:willin/test.git',
+  path: __dirname,
+  ref: 'refs/heads/master',
   app: 'test'
 }];
 
 exports.projects = (() => {
   const result = {};
-  for (let i = 0; i < projects.length; i++) {
+  for (let i = 0; i < projects.length; i += 1) {
     result[md5(projects[i].repo)] = projects[i];
   }
   return result;

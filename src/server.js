@@ -1,5 +1,5 @@
-import http from 'http';
-import createHandler from './handler';
+const http = require('http');
+const createHandler = require('./handler');
 
 module.exports = ({ path = '/', host = '0.0.0.0', port = 8888 } = {}) => {
   const handler = createHandler(path);

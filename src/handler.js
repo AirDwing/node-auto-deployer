@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
-import bl from 'bl';
+const { EventEmitter } = require('events');
+const bl = require('bl');
 
 
 module.exports = (path) => {
@@ -17,12 +17,6 @@ module.exports = (path) => {
       callback(err);
     };
 
-    const event = req.headers['x-gitlab-event'];
-
-    if (!event) {
-      return hasError('No X-Gitlab-Event found on request');
-    }
-
     req.pipe(bl((err, data) => {
       if (err) {
         return hasError(err.message);
@@ -34,16 +28,15 @@ module.exports = (path) => {
         return hasError(e);
       }
 
-      const eventKind = obj.object_kind;
-
       // invalid json
-      if (!obj || !obj.repository || !obj.repository.name) {
+      if (!obj) {
         return hasError(`received invalid data from ${req.headers.host}, returning 400`);
       }
 
       res.writeHead(200, { 'content-type': 'application/json' });
       res.end('{"ok":true}');
 
+      const eventKind = obj.event;
       const emitData = {
         event: eventKind,
         payload: obj,

@@ -1,7 +1,8 @@
-import deployer from '../src/server';
-import fs from 'fs';
-import { exist, md5, spawn, setVersion } from './helper';
-import { logPath, cachePath, projects } from './config';
+const deployer = require('../src/server');
+const { md5 } = require('@dwing/common');
+const fs = require('fs');
+const { exist, spawn, setVersion } = require('./helper');
+const { logPath, cachePath, projects } = require('./config');
 
 const server = deployer();
 
@@ -9,16 +10,16 @@ server.on('error', (err) => {
   console.error(err);
 });
 
-server.on('build', async(event) => {
+server.on('push', async (event) => {
   const payload = event.payload;
-  const key = md5(payload.repository.git_ssh_url);
-  // 构建失败
-  if (event.event !== 'build' || payload.build_status !== 'success' || (payload.build_stage !== 'deploy' && payload.ref !== 'master')) {
+  const key = md5(payload.repository.ssh_url);
+  const project = projects[key];
+  // 确定为哪个项目触发的部署
+  if (project === undefined) {
     return;
   }
-  // 确定为哪个项目触发的部署
-  const project = projects[key];
-  if (project === undefined) {
+  // 只构建设定分支
+  if (event.event !== 'push' || payload.ref !== project.ref) {
     return;
   }
   const packPath = `${project.path}package.json`;
@@ -46,7 +47,7 @@ server.on('build', async(event) => {
   }
   // 更新依赖项
   console.log(
-    await spawn('npm', ['install'], { cwd: project.path, env: process.env })
+    await spawn('yarn', ['install'], { cwd: project.path, env: process.env })
   );
   // 删除日志
   await spawn('rm', [`${project.app}*.log`], { cwd: logPath, env: process.env });

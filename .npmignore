@@ -1,3 +1,6 @@
 node_modules/
-src
+
+.DS_Store
+dump.rdb
 *.log
+*.log.*
