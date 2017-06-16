@@ -43,6 +43,13 @@ server.on('push', async (event) => {
   // 删除日志
   await spawn('rm', [`${project.app}*.log`], { cwd: logPath, env: process.env });
   // 平滑热重启
-  await spawn('pm2', ['reload', project.app], { cwd: project.path, env: process.env });
+  if (Array.isArray(project.app)) {
+    project.app.forEach(async (app) => {
+      await spawn('pm2', ['reload', app], { cwd: project.path, env: process.env });
+    });
+  } else {
+    await spawn('pm2', ['reload', project.app], { cwd: project.path, env: process.env });
+  }
+
   console.log('%s Deploy #%s ended at %s', project.app, commit, new Date());
 });
