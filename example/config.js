@@ -5,7 +5,7 @@ exports.cachePath = `${__dirname.replace('/example', '')}/.cache/`;
 
 const projects = [{
   repo: 'git@git.coding.net:willin/test.git',
-  path: __dirname,
+  path: '/',
   ref: 'refs/heads/master',
   app: 'test'
 }];

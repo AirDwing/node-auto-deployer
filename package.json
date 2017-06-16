@@ -21,6 +21,7 @@
   "homepage": "https://github.com/airdwing/node-coding-deploy#readme",
   "devDependencies": {
     "@dwing/common": "^1.1.2",
+    "@dwing/redis": "^1.0.0",
     "eslint": "^3.19.0",
     "eslint-config-dwing": "^1.0.2"
   },

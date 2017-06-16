@@ -1,8 +1,8 @@
 const deployer = require('../src/server');
-const { md5 } = require('@dwing/common');
-const fs = require('fs');
-const { exist, spawn, setVersion } = require('./helper');
-const { logPath, cachePath, projects } = require('./config');
+const { md5, getTimestamp } = require('@dwing/common');
+const redis = require('./redis');
+const { exist, spawn } = require('./helper');
+const { logPath, projects } = require('./config');
 
 const server = deployer();
 
@@ -27,34 +27,18 @@ server.on('push', async (event) => {
   if (!exist(packPath)) {
     return;
   }
-  console.log('%s Deploy start at %s', project.app, new Date());
+  const commit = payload.after.substr(0, 7);
+  console.log('%s Deploy #%s started at %s', project.app, commit, new Date());
+  await redis.set(`deploy:${project.app}:${getTimestamp()}`, commit);
   // 拉取最新代码
-  console.log(
-    await spawn('git', ['pull'], { cwd: project.path, env: process.env })
-  );
-  // 判断项目版本是否升级
-  let pack;
-  try {
-    pack = JSON.parse(fs.readFileSync(packPath, 'utf8'));
-  } catch (e) { pack = {}; }
-  const versionCache = `${cachePath}${key}.version`;
-  if (await exist(versionCache)) {
-    const currentVersion = fs.readFileSync(versionCache, 'utf8');
-    console.log(currentVersion === pack.version, currentVersion, pack.version);
-    if (currentVersion === pack.version) {
-      return;
-    }
-  }
+  await spawn('git', ['checkout', '.'], { cwd: project.path, env: process.env });
+  await spawn('git', ['fetch'], { cwd: project.path, env: process.env });
+  await spawn('git', ['checkout', commit], { cwd: project.path, env: process.env });
   // 更新依赖项
-  console.log(
-    await spawn('yarn', ['install'], { cwd: project.path, env: process.env })
-  );
+  await spawn('yarn', { cwd: project.path, env: process.env });
   // 删除日志
   await spawn('rm', [`${project.app}*.log`], { cwd: logPath, env: process.env });
   // 平滑热重启
-  console.log(
-    await spawn('pm2', ['reload', project.app], { cwd: project.path, env: process.env })
-  );
-  // 记录当前版本号
-  await setVersion(versionCache, pack.version);
+  await spawn('pm2', ['reload', project.app], { cwd: project.path, env: process.env });
+  console.log('%s Deploy #%s ended at %s', project.app, commit, new Date());
 });
