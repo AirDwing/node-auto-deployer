@@ -33,17 +33,5 @@ const spawn = (cmd, args, options) => {
   return deferred.promise;
 };
 
-const setVersion = (file, ver) => {
-  const deferred = getDefer();
-  fs.writeFile(file, ver, (err) => {
-    if (err) {
-      deferred.resolve(false);
-    }
-    deferred.resolve(true);
-  });
-  return deferred.promise;
-};
-
 exports.exist = exist;
 exports.spawn = spawn;
-exports.setVersion = setVersion;

@@ -1,7 +1,6 @@
 const { md5 } = require('@dwing/common');
 
 exports.logPath = '/home/ubuntu/apps/logs/';
-exports.cachePath = `${__dirname.replace('/example', '')}/.cache/`;
 
 const projects = [{
   repo: 'git@git.coding.net:willin/test.git',
