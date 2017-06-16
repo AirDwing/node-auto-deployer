@@ -7,7 +7,9 @@ const { logPath, projects } = require('./config');
 const server = deployer();
 
 server.on('error', (err) => {
-  console.error(err);
+  if (err.message !== 'SyntaxError: Unexpected end of JSON input') {
+    console.error(err);
+  }
 });
 
 server.on('push', async (event) => {
