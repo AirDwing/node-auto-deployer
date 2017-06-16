@@ -1,5 +1,11 @@
 const { md5 } = require('@dwing/common');
 
+exports.redisOptions = {
+  host: '127.0.0.1',
+  port: 6379,
+  db: 0
+};
+
 exports.logPath = '/home/ubuntu/apps/logs/';
 
 const projects = [{
