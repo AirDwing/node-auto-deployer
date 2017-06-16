@@ -11,11 +11,15 @@ server.on('error', (err) => {
 });
 
 server.on('push', async (event) => {
+  console.log(JSON.stringify(event, null, 2));
   const payload = event.payload;
   const key = md5(payload.repository.ssh_url);
   const project = projects[key];
   // 确定为哪个项目触发的部署
   if (project === undefined) {
+    return;
+  }
+  if (project.token && payload.token !== project.token) {
     return;
   }
   // 只构建设定分支

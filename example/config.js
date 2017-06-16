@@ -6,7 +6,8 @@ const projects = [{
   repo: 'git@git.coding.net:willin/test.git',
   path: '/',
   ref: 'refs/heads/master',
-  app: 'test'
+  app: 'test',
+  token: 'tes111'
 }];
 
 exports.projects = (() => {
