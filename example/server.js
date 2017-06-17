@@ -13,7 +13,6 @@ server.on('error', (err) => {
 });
 
 server.on('push', async (event) => {
-  console.log(JSON.stringify(event, null, 2));
   const payload = event.payload;
   const key = md5(payload.repository.ssh_url);
   const project = projects[key];
@@ -42,14 +41,14 @@ server.on('push', async (event) => {
   await spawn('git', ['checkout', commit], { cwd: project.path, env: process.env });
   // 更新依赖项
   await spawn('yarn', { cwd: project.path, env: process.env });
-  // 删除日志
-  await spawn('rm', [`${project.app}*.log`], { cwd: logPath, env: process.env });
-  // 平滑热重启
+  // 删除日志 平滑热重启
   if (Array.isArray(project.app)) {
     project.app.forEach(async (app) => {
+      await spawn('rm', [`${app}.*.log`], { cwd: logPath, env: process.env });
       await spawn('pm2', ['reload', app], { cwd: project.path, env: process.env });
     });
   } else {
+    await spawn('rm', [`${project.app}.*.log`], { cwd: logPath, env: process.env });
     await spawn('pm2', ['reload', project.app], { cwd: project.path, env: process.env });
   }
 
